@@ -3,6 +3,7 @@ const Jasmine = require('jasmine');
 const path = require('path');
 const glob = require('glob');
 const fs = require('fs');
+const diff = require('diff');
 
 // ====
 // LINTER
@@ -33,8 +34,11 @@ try {
         try {
             const candidateContents = fs.readFileSync(root(filename));
             const requiredContents = fs.readFileSync(required(filename));
-
-            if (!candidateContents.equals(requiredContents)) {
+            const areEqual = diff.diffTrimmedLines(
+                candidateContents.toString(),
+                requiredContents.toString()
+            ).length;
+            if (!areEqual) {
                 console.log(filename, '\t\t', 'INCORRECT CONTENTS');
                 return false;
             }
